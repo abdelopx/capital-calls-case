@@ -1,5 +1,6 @@
 
 import datetime
+from .models import Bill, Investor, CapitalCall
 
 def get_upfront_fees(fee_percentage, amount_invested):
     return fee_percentage * amount_invested * 5
@@ -22,11 +23,8 @@ def get_yearly_fees(investment_date, fee_percentage, amount_invested, years):
         for year in range(2, years + 1):
             yearly_fee = (fee_percentage - get_percentage_year_value(year)) * amount_invested
             total_fees.append(yearly_fee)
-      
-
 
     return total_fees
-
 
 def get_percentage_year_value(year): 
     percentage_rates = {
@@ -54,3 +52,22 @@ def get_days_in_year(date):
 def is_before_threshold_year(date):
     threshold_date = datetime.date(2019, 4, 1)
     return date < threshold_date
+
+
+def calculate_capital_call(bill_ids, investor_id, status, due_date):
+    bills = []
+    total_amount = 0
+    investor = Investor.objects.get(id=investor_id)
+
+    for bill_id in bill_ids:
+        bill = Bill.objects.get(id=bill_id)
+
+        total_amount = total_amount + bill.amount
+        bills.append(bill)
+        
+    
+    created_capital_call = CapitalCall.objects.create(investor=investor, total_amount=total_amount, status=status, due_date=due_date)
+    created_capital_call.bills.set(bills)
+
+    return created_capital_call
+

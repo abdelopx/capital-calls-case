@@ -11,6 +11,7 @@ class Investor(models.Model):
 
 
 class Bill(models.Model):
+    
     BILL_TYPES = [
         ('upfront_fees', 'Upfront Fees'),
         ('yearly_fees', 'Yearly Fees'),
@@ -20,6 +21,7 @@ class Bill(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     name = models.CharField(max_length=255)
     due_date = models.DateField()
+    fee_percentage = models.DecimalField(max_digits=10, decimal_places=2)
 
 
     def __str__(self):
@@ -36,6 +38,7 @@ class CapitalCall(models.Model):
         ('paid', 'Paid'),
         ('overdue', 'Overdue'),
     ])
+    due_date = models.DateField()
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 

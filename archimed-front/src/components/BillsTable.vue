@@ -23,10 +23,6 @@ async function fetchAllbills() {
 
 const columns: TableColumnType<IBill>[] = [
   {
-    title: "Name",
-    dataIndex: "name",
-  },
-  {
     title: "Bill Type",
     dataIndex: "bill_type",
   },

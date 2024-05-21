@@ -19,13 +19,10 @@
             <a-select-option value="overdue">Overdue</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="Total Amount" name="total_amount" :rules="[{ required: true, message: 'Please input an amount' }]">
-          <a-input v-model:value="formState.total_amount" />
-        </a-form-item>
 
-        <!-- <a-form-item label="Date" name="due_date" :rules="[{ required: true, message: 'Please input an email' }]">
+        <a-form-item label="Date" name="due_date" :rules="[{ required: true, message: 'Please input an email' }]">
           <a-date-picker format="YYYY-MM-DD" v-model:value="formState.due_date" />
-        </a-form-item> -->
+        </a-form-item>
 
         <a-form-item label="Investor" name="investor" :rules="[{ required: true, message: 'Please select an Investor' }]">
           <a-select ref="select" v-model:value="formState.investor">
@@ -61,22 +58,21 @@ import { getAllInvestors, IInvestor } from "../api/investors";
 const emit = defineEmits(["refresh-capital-calls"]);
 
 interface FormState {
-  total_amount: number | null;
   status: string;
   investor: number | null;
   bills: number[];
+  due_date: string;
 }
 const formState = reactive<FormState>({
-  total_amount: null,
   status: "",
   investor: null,
   bills: [],
+  due_date: ""
 });
 const open = ref<boolean>(false);
 const isLoading = ref(false);
 const investors = ref<IInvestor[]>([]);
 const availableBills = ref<number[]>([]);
-
 
 const showModal = () => {
   open.value = true;

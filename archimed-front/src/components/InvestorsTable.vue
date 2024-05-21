@@ -23,6 +23,10 @@ async function fetchAllInvestors() {
 
 const columns: TableColumnType<IInvestor>[] = [
   {
+    title: "ID",
+    dataIndex: "id",
+  },
+  {
     title: "Name",
     dataIndex: "name",
   },

@@ -13,8 +13,9 @@ export interface IBill {
 export interface ICapitalCalls {
   total_amount: string;
   status: string;
-  investor: number
+  investor: number;
   bills: number[];
+  due_date: any;
 }
 
 export async function getAllCapitalBills() {
@@ -23,9 +24,9 @@ export async function getAllCapitalBills() {
 }
 
 export async function addCapitalCall(capitalCall: ICapitalCalls) {
-  await fetch(API_URL + "/capital_calls/", {
+  await fetch(API_URL + "/capital_calls/generate_capital_call/", {
     method: "POST",
-    body: JSON.stringify(capitalCall),
+    body: JSON.stringify({ ...capitalCall, due_date: capitalCall.due_date.format("YYYY-MM-DD") }),
     headers: {
       "Content-Type": "application/json",
     },

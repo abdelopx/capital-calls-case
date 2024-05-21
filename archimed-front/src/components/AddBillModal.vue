@@ -11,27 +11,33 @@
         @finish="onFinish"
         @finishFailed="onFinishFailed"
       >
-        <a-form-item label="Bill Type" name="bill_type" :rules="[{ required: true }]">
+        <a-form-item label="Bill Type" name="bill_type" :rules="[{ required: true, message: 'Please choose a bill type' }]">
           <a-select ref="select" v-model:value="formState.bill_type">
             <a-select-option value="yearly_fees">Yearly Fees</a-select-option>
             <a-select-option value="upfront_fees">Upfront Fees</a-select-option>
           </a-select>
         </a-form-item>
+
         <a-form-item label="Amount" name="amount" :rules="[{ required: true, message: 'Please input an amount' }]">
-          <a-input v-model:value="formState.amount" />
-        </a-form-item>
-        <a-form-item label="Name" name="name" :rules="[{ required: true, message: 'Please input a name' }]">
-          <a-input v-model:value="formState.name" />
+          <a-input v-model:value="formState.amount" type="number" />
         </a-form-item>
 
-        <a-form-item label="Date" name="due_date" :rules="[{ required: true, message: 'Please input an email' }]">
-          <a-date-picker format="YYYY-MM-DD" v-model:value="formState.due_date" />
+        <a-form-item label="Fee Percentage (in %)" name="fee_percentage" :rules="[{ required: true, message: 'Please input a fee percentage' }]">
+          <a-input v-model:value="formState.fee_percentage" type="number" />
+        </a-form-item>
+
+        <a-form-item label="Name" name="name" :rules="[{ required: true, message: 'Please input a name' }]">
+          <a-input v-model:value="formState.name" />
         </a-form-item>
 
         <a-form-item label="Investor" name="investor" :rules="[{ required: true, message: 'Please select an Investor' }]">
           <a-select ref="select" v-model:value="formState.investor">
             <a-select-option v-for="investor in investors" :value="investor.id">{{ investor.name }}</a-select-option>
           </a-select>
+        </a-form-item>
+
+        <a-form-item label="Investment Date" name="investment_date" :rules="[{ required: true, message: 'Please input an date' }]">
+          <a-date-picker format="YYYY-MM-DD" v-model:value="formState.investment_date" />
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
@@ -52,43 +58,46 @@ const emit = defineEmits(["refresh-bills"]);
 interface FormState {
   amount: number | null;
   name: string;
-  due_date: any;
+  investment_date: any;
   bill_type: string;
   investor: number | null;
-}
-
-const open = ref<boolean>(false);
-const isLoading = ref(false);
-const investors = ref<IInvestor[]>([]);
-
-const showModal = () => {
-  open.value = true;
-};
-
-onMounted(() => {
-  fetchAllInvestors();
-});
-
-async function fetchAllInvestors() {
-  investors.value = await getAllInvestors();
+  fee_percentage: number | null;
 }
 
 const formState = reactive<FormState>({
   amount: null,
   name: "",
-  due_date: "",
+  investment_date: "",
   bill_type: "",
   investor: null,
+  fee_percentage: null,
 });
-const onFinish = async (values: any) => {
+
+const open = ref<boolean>(false);
+const isLoading = ref(false);
+const investors = ref<IInvestor[]>([]);
+
+onMounted(() => {
+  fetchAllInvestors();
+});
+
+function showModal() {
+  open.value = true;
+}
+
+async function fetchAllInvestors() {
+  investors.value = await getAllInvestors();
+}
+
+async function onFinish(values: any) {
   isLoading.value = true;
   await addBill(values);
   isLoading.value = false;
   emit("refresh-bills");
   open.value = false;
-};
+}
 
-const onFinishFailed = (errorInfo: any) => {
+function onFinishFailed(errorInfo: any) {
   console.log("Failed:", errorInfo);
-};
+}
 </script>
