@@ -34,9 +34,9 @@ class BillViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        investor_name = self.request.query_params.get('investor_name')
-        if investor_name:
-            queryset = queryset.filter(investor__name__icontains=investor_name)
+        investor_id = self.request.query_params.get('investor')
+        if investor_id:
+            queryset = queryset.filter(investor_id=investor_id)
         return queryset
 
     @action(detail=False, methods=['post'])

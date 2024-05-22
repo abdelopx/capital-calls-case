@@ -12,8 +12,8 @@ export interface IBill {
   id: number;
 }
 
-export async function getAllBills() {
-  const response = await fetch(API_URL + "/bills/");
+export async function getAllBills(investorId: number | null) {
+  const response = await fetch(API_URL + "/bills/?investor=" + (investorId ? investorId : ""));
   return (await response.json()) as IBill[];
 }
 

@@ -35,7 +35,7 @@
             mode="tags"
             style="width: 100%"
             placeholder="Please select"
-            :options="availableBills.map((bill) => ({ value: bill }))"
+            :options="bills.map((bill) => ({ value: bill }))"
             @change="handleChange"
           ></a-select>
         </a-form-item>
@@ -48,7 +48,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, defineEmits, onMounted } from "vue";
+import { ref, defineEmits, onMounted, watchEffect } from "vue";
 import { reactive } from "vue";
 import { addCapitalCall } from "../api/capitalCalls";
 
@@ -67,12 +67,12 @@ const formState = reactive<FormState>({
   status: "",
   investor: null,
   bills: [],
-  due_date: ""
+  due_date: "",
 });
 const open = ref<boolean>(false);
 const isLoading = ref(false);
 const investors = ref<IInvestor[]>([]);
-const availableBills = ref<number[]>([]);
+const bills = ref<number[]>([]);
 
 const showModal = () => {
   open.value = true;
@@ -80,11 +80,21 @@ const showModal = () => {
 
 onMounted(async () => {
   fetchAllInvestors();
-  availableBills.value = (await getAllBills()).map((bill) => bill.id);
+  fetchAllbills();
+});
+
+//const availableBills = computed(() => (await getAllBills(formState.investor)).map((bill) => bill.id));
+
+watchEffect(async () => {
+  bills.value = (await getAllBills(formState.investor)).map((bill) => bill.id);
 });
 
 async function fetchAllInvestors() {
   investors.value = await getAllInvestors();
+}
+
+async function fetchAllbills() {
+  bills.value = (await getAllBills(formState.investor)).map((bill) => bill.id);
 }
 
 const onFinish = async (values: any) => {
