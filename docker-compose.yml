@@ -1,0 +1,14 @@
+services:
+  backend:
+    build: ./archimed-back
+    volumes:
+      - ./archimed-back:/app
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./archimed-front
+    volumes:
+      - ./archimed-front:/app
+    ports:
+      - "5173:5173"

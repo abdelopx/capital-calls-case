@@ -46,6 +46,7 @@ class BillViewSet(viewsets.ModelViewSet):
         amount_invested = request.data.get('amount')
         investment_date = datetime.datetime.strptime(request.data.get('investment_date'), '%Y-%m-%d').date()
         investment_type = request.data.get('bill_type')
+        name = request.data.get('name')
         investor = Investor.objects.get(id=investor_id)
 
         membership_fee = get_membership_fee(amount_invested)
@@ -53,11 +54,11 @@ class BillViewSet(viewsets.ModelViewSet):
 
         if investment_type == "upfront_fees":
             upfront_fees = get_upfront_fees(fee_percentage, amount_invested)
-            bills.append(Bill.objects.create(investor=investor, bill_type=investment_type, fee_percentage=fee_percentage, amount=upfront_fees + membership_fee,due_date=datetime.date(investment_date.year, 12, 31)))
+            bills.append(Bill.objects.create(investor=investor, bill_type=investment_type, fee_percentage=fee_percentage, amount=upfront_fees + membership_fee,due_date=datetime.date(investment_date.year, 12, 31), name=name))
         elif investment_type == "yearly_fees":
             print(amount_invested)
             yearly_fees = get_yearly_fees(investment_date, fee_percentage, amount_invested, 5)
             for index, yearly_fee in enumerate(yearly_fees):
-                bills.append(Bill.objects.create(investor=investor, bill_type=investment_type, fee_percentage=fee_percentage, amount=yearly_fee + membership_fee,due_date=datetime.date(investment_date.year + index, 12, 31)))
+                bills.append(Bill.objects.create(investor=investor, bill_type=investment_type, fee_percentage=fee_percentage, amount=yearly_fee + membership_fee,due_date=datetime.date(investment_date.year + index, 12, 31), name=name))
         
         return Response({'status': 'bills generated', 'bills': BillSerializer(bills, many=True).data}, status=status.HTTP_201_CREATED)

@@ -26,7 +26,7 @@
           <a-input v-model:value="formState.fee_percentage" type="number" />
         </a-form-item>
 
-        <a-form-item label="Name" name="name" :rules="[{ required: true, message: 'Please input a name' }]">
+        <a-form-item label="Bill name" name="name" :rules="[{ required: true, message: 'Please input a name' }]">
           <a-input v-model:value="formState.name" />
         </a-form-item>
 
@@ -78,6 +78,8 @@ const isLoading = ref(false);
 const investors = ref<IInvestor[]>([]);
 
 onMounted(() => {
+  console.log();
+
   fetchAllInvestors();
 });
 

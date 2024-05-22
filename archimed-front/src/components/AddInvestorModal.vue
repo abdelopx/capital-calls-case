@@ -1,6 +1,7 @@
 <template>
   <div>
     <a-button type="primary" @click="showModal">Add Investor</a-button>
+
     <a-modal footer="" v-model:open="open" title="Add a new Investor">
       <a-form
         :model="formState"
@@ -21,6 +22,7 @@
 
         <a-form-item label="IBAN" name="iban" :rules="[{ required: true, message: 'Please input a correct IBAN' }]">
           <a-input v-model:value="formState.iban" />
+          <span v-if="errorMessage" class="text-red-500">{{ errorMessage }}</span>
         </a-form-item>
 
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
@@ -32,6 +34,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, defineEmits } from "vue";
+import IBAN from "iban";
 import { reactive } from "vue";
 import addInvestor from "../api/investors";
 
@@ -45,6 +48,7 @@ interface FormState {
 
 const open = ref<boolean>(false);
 const isLoading = ref(false);
+const errorMessage = ref<string>();
 
 const showModal = () => {
   open.value = true;
@@ -56,12 +60,24 @@ const formState = reactive<FormState>({
   iban: "",
 });
 const onFinish = async (values: any) => {
+  if (!IBAN.isValid(values.iban)) {
+    errorMessage.value = "Please input a valid IBAN.";
+    return;
+  }
   isLoading.value = true;
   await addInvestor(values);
   isLoading.value = false;
   emit("refresh-investors");
   open.value = false;
+  resetForm();
 };
+
+function resetForm() {
+  errorMessage.value = "";
+  formState.email = "";
+  formState.iban = "";
+  formState.name = "";
+}
 
 const onFinishFailed = (errorInfo: any) => {
   console.log("Failed:", errorInfo);
